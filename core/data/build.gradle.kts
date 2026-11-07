@@ -41,9 +41,8 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 
-    // Credentials / token storage (encrypted). Never log or hardcode secrets.
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.security.crypto)
+    // Settings + Keystore-encrypted credentials. Never log or hardcode secrets.
+    api(libs.androidx.datastore.preferences)
 
     testImplementation(libs.ktor.client.mock)
     testImplementation(platform(libs.junit.bom))

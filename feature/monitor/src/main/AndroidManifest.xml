@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Type "health" (dataSync has a daily limit on Android 15). On Android 14+ it also requires
+         one of the health runtime permissions: ACTIVITY_RECOGNITION fits a running app. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <!-- Keeps the CPU awake between polls while monitoring is on (screen locked). -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application>
+        <service
+            android:name=".MonitorService"
+            android:exported="false"
+            android:foregroundServiceType="health" />
+    </application>
+</manifest>
