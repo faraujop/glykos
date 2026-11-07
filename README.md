@@ -103,11 +103,20 @@ está lista para Glykos.
 
 ### 2.1 Instalar
 
-Mientras no haya versión publicada, la app se instala desde el código (ver [Desarrollo](#desarrollo)):
+- **Sin ser desarrollador**: instala el APK release siguiendo [docs/INSTALL.md](docs/INSTALL.md)
+  (guía paso a paso, también en PDF).
+- **Desde el código** (ver [Desarrollo](#desarrollo)): `./gradlew installDebug` instala la versión de
+  desarrollo como `com.glykos.app.debug`, que convive con la release.
+
+### APK release
 
 ```bash
-./gradlew installDebug
+./gradlew :app:assembleRelease   # → app/build/outputs/apk/release/glykos-<versión>.apk
 ```
+
+La firma se lee de `local.properties` (`release.storeFile`, `release.storePassword`,
+`release.keyAlias`, `release.keyPassword`); el keystore vive **fuera del repo**. Guarda copia del
+keystore y su contraseña: sin ellos no se pueden publicar actualizaciones que se instalen encima.
 
 ### 2.2 Configurar
 
