@@ -18,3 +18,6 @@ local.properties
 
 # Windows download marker
 *:Zone.Identifier
+
+# Personal notes (not part of the project)
+docs/linkedin-post.md
