@@ -6,10 +6,10 @@ minSdk = "26"
 jvmTarget = "17"
 
 # Build
-agp = "8.7.3"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
-hilt = "2.54"
+agp = "9.5.1"
+kotlin = "2.4.21"
+ksp = "2.3.13"
+hilt = "2.60.1"
 
 # AndroidX
 coreKtx = "1.15.0"
@@ -72,7 +72,6 @@ unit-test = ["junit-jupiter", "mockk", "turbine", "kotlinx-coroutines-test"]
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
