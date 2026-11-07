@@ -104,7 +104,7 @@ está lista para Glykos.
 ### 2.1 Instalar
 
 - **Sin ser desarrollador**: instala el APK release siguiendo [docs/INSTALL.md](docs/INSTALL.md)
-  (guía paso a paso, también en PDF).
+  (guía paso a paso; también en PDF: [docs/Glykos-guia-instalacion.pdf](docs/Glykos-guia-instalacion.pdf)).
 - **Desde el código** (ver [Desarrollo](#desarrollo)): `./gradlew installDebug` instala la versión de
   desarrollo como `com.glykos.app.debug`, que convive con la release.
 
