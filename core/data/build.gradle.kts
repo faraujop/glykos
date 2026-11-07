@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
@@ -47,4 +49,20 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.bundles.unit.test)
     testRuntimeOnly(libs.junit.platform.launcher)
+}
+
+// Live test against the real LibreLinkUp API, opt-in only:
+//   ./gradlew :core:data:testDebugUnitTest -Pllu.live=true --tests '*LibreLinkUpLiveTest*'
+// Credentials come from local.properties (git-ignored) and are passed only to the test JVM.
+tasks.withType<Test>().configureEach {
+    if (providers.gradleProperty("llu.live").orNull == "true") {
+        val props = Properties()
+        rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(props::load)
+        systemProperty("llu.live", "true")
+        listOf("llu.email", "llu.password", "llu.host").forEach { key ->
+            props.getProperty(key)?.let { systemProperty(key, it) }
+        }
+        outputs.upToDateWhen { false }
+        testLogging { showStandardStreams = true }
+    }
 }
