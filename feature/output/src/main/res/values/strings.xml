@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_readings_name">Lecturas de glucosa</string>
+    <string name="channel_readings_description">Lectura periódica, reenviada al reloj. Sin sonido.</string>
+    <string name="channel_alarms_name">Alarmas de glucosa</string>
+    <string name="channel_alarms_description">Glucosa baja, muy baja, alta o sin datos.</string>
+</resources>
