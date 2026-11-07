@@ -33,6 +33,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,6 +53,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.glykos.app.ui.theme.GlykosTheme
 import com.glykos.core.data.settings.OutputMode
+import com.glykos.core.domain.announce.AnnouncementSettings
 import com.glykos.core.domain.announce.Announcement
 import com.glykos.core.domain.announce.Announcement.Kind
 import com.glykos.core.domain.model.GlucoseReading
@@ -99,6 +101,7 @@ private fun HomeScreen(
     val status by vm.status.collectAsState()
     val email by vm.email.collectAsState()
     val mode by vm.outputMode.collectAsState()
+    val announce by vm.announcementSettings.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
@@ -108,6 +111,7 @@ private fun HomeScreen(
         MonitorCard(status, hasCredentials = email != null, onStart = vm::start, onStop = vm::stop)
         AccountCard(email, onSave = vm::saveCredentials, onClear = vm::clearCredentials)
         OutputCard(mode, running = status.running, onSelect = vm::setOutputMode)
+        announce?.let { AnnouncementCard(it, running = status.running, onSave = vm::saveAnnouncementSettings) }
         BatteryCard()
         TestCard(voice, watch)
     }
@@ -229,7 +233,73 @@ private fun OutputCard(mode: OutputMode, running: Boolean, onSelect: (OutputMode
                 Text(label)
             }
         }
-        if (running) Text("Se aplica al volver a empezar.", style = MaterialTheme.typography.bodySmall)
+        if (running) Text("Se aplica al momento.", style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+private fun AnnouncementCard(saved: AnnouncementSettings, running: Boolean, onSave: (AnnouncementSettings) -> Unit) {
+    var draft by remember(saved) { mutableStateOf(saved) }
+    val r = AnnouncementSettings
+
+    Section("Avisos") {
+        Stepper("Avisar cada", draft.intervalMinutes, r.INTERVAL_RANGE, step = 1, unit = "min") {
+            draft = draft.copy(intervalMinutes = it)
+        }
+        Text(
+            "Las alarmas (baja, muy baja, alta, sin datos) avisan al momento y se repiten cada 5 min.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+
+        HorizontalDivider()
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text("Hablar solo si cambia")
+                Text("Silencia el aviso rutinario si la glucosa apenas cambia", style = MaterialTheme.typography.bodySmall)
+            }
+            Switch(
+                checked = draft.minChangeMgDl != null,
+                onCheckedChange = { on -> draft = draft.copy(minChangeMgDl = if (on) 10 else null) },
+            )
+        }
+        draft.minChangeMgDl?.let { value ->
+            Stepper("Cambio mínimo", value, r.MIN_CHANGE_RANGE, step = 1, unit = "mg/dl") {
+                draft = draft.copy(minChangeMgDl = it)
+            }
+        }
+
+        HorizontalDivider()
+        Text("Umbrales de alarma", style = MaterialTheme.typography.titleSmall)
+        Stepper("Muy baja por debajo de", draft.veryLow, r.VERY_LOW_RANGE, step = 1, unit = "mg/dl") {
+            draft = draft.copy(veryLow = it)
+        }
+        Stepper("Baja por debajo de", draft.low, r.LOW_RANGE, step = 5, unit = "mg/dl") { draft = draft.copy(low = it) }
+        Stepper("Alta por encima de", draft.high, r.HIGH_RANGE, step = 10, unit = "mg/dl") { draft = draft.copy(high = it) }
+        Text(
+            "Por defecto: consenso internacional de tiempo en rango (54 / 70 / 180). " +
+                "Ajusta los tuyos con tu equipo médico.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { onSave(draft) }, enabled = draft != saved) { Text("Guardar") }
+            TextButton(onClick = { draft = AnnouncementSettings() }, enabled = draft != AnnouncementSettings()) {
+                Text("Valores por defecto")
+            }
+        }
+        if (running && draft != saved) {
+            Text("Al guardar se reinicia la vigilancia y se anuncia la lectura actual.", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun Stepper(label: String, value: Int, range: IntRange, step: Int, unit: String, onChange: (Int) -> Unit) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, Modifier.weight(1f))
+        OutlinedButton(onClick = { onChange((value - step).coerceIn(range)) }, enabled = value > range.first) { Text("−") }
+        Text("$value $unit", Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.bodyLarge)
+        OutlinedButton(onClick = { onChange((value + step).coerceIn(range)) }, enabled = value < range.last) { Text("+") }
     }
 }
 

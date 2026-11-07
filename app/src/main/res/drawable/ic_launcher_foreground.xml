@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Glykos mark: a drop drawn as an open "G" whose bar is a glucose curve ending in the current reading. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:scaleX="0.16" android:scaleY="0.16" android:translateX="13.04" android:translateY="13.68">
+        <path
+            android:pathData="M326,188.6 L256,84 L156.2,233.4 A120,120 0 1,0 375.5,310.5"
+            android:strokeWidth="36"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round">
+            <aapt:attr name="android:strokeColor">
+                <gradient android:type="linear" android:startX="118" android:startY="66" android:endX="394" android:endY="438">
+                    <item android:offset="0" android:color="#FFFFC15E" />
+                    <item android:offset="1" android:color="#FFFF5E7E" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path
+            android:pathData="M375.5,310.5 L352,310.5 C330,310.5 324,262 302,262 C280,262 274,310.5 254,310.5"
+            android:strokeWidth="30"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round">
+            <aapt:attr name="android:strokeColor">
+                <gradient android:type="linear" android:startX="118" android:startY="66" android:endX="394" android:endY="438">
+                    <item android:offset="0" android:color="#FFFFC15E" />
+                    <item android:offset="1" android:color="#FFFF5E7E" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path android:pathData="M198,310.5 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0 Z" android:fillColor="#FFFFF4E6" />
+    </group>
+</vector>

@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" alt="Logo de Glykos" width="128"></p>
+
 # Glykos
 
 App Android personal que comunica la glucosa de un sensor CGM **mientras corres**, sin mirar ni

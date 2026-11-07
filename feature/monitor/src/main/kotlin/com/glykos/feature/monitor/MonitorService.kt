@@ -20,7 +20,6 @@ import com.glykos.core.data.settings.OutputMode
 import com.glykos.core.data.settings.SettingsRepository
 import com.glykos.core.data.source.GlucoseSource
 import com.glykos.core.domain.announce.Announcement
-import com.glykos.core.domain.announce.AnnouncementConfig
 import com.glykos.core.domain.announce.AnnouncementPolicy
 import com.glykos.core.domain.model.GlucoseResult
 import com.glykos.core.domain.monitor.AnnouncementSink
@@ -32,7 +31,9 @@ import com.glykos.feature.output.VoiceOutput
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
@@ -115,25 +116,33 @@ class MonitorService : LifecycleService() {
         }
     }
 
+    /**
+     * Restarts the loop whenever output mode or announcement settings change, so edits apply
+     * while running. A restart announces the next reading immediately (fresh policy state).
+     */
     private suspend fun monitor() {
-        val sinks = when (settings.outputMode.first()) {
-            OutputMode.VOICE -> listOf(sink("Voz", voice))
-            OutputMode.WATCH -> listOf(sink("Reloj", watch))
-            OutputMode.BOTH -> listOf(sink("Voz", voice), sink("Reloj", watch))
-        }
-        val monitor = GlucoseMonitor(
-            policy = AnnouncementPolicy(AnnouncementConfig()),
-            fetch = source::latest,
-            sinks = sinks,
-        )
         controller.update { it.copy(running = true, error = null) }
-        lifecycleScope.launch {
-            monitor.state.collect { state ->
-                controller.update { it.copy(monitor = state) }
-                notifyStatus(state)
+        combine(settings.outputMode, settings.announcementSettings, ::Pair).collectLatest { (mode, announce) ->
+            val sinks = when (mode) {
+                OutputMode.VOICE -> listOf(sink("Voz", voice))
+                OutputMode.WATCH -> listOf(sink("Reloj", watch))
+                OutputMode.BOTH -> listOf(sink("Voz", voice), sink("Reloj", watch))
+            }
+            val monitor = GlucoseMonitor(
+                policy = AnnouncementPolicy(announce.toConfig()),
+                fetch = source::latest,
+                sinks = sinks,
+            )
+            coroutineScope {
+                launch {
+                    monitor.state.collect { state ->
+                        controller.update { it.copy(monitor = state) }
+                        notifyStatus(state)
+                    }
+                }
+                monitor.run()
             }
         }
-        monitor.run()
     }
 
     private fun sink(name: String, output: GlucoseOutput) = object : AnnouncementSink {

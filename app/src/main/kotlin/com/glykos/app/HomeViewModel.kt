@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.glykos.core.data.settings.OutputMode
 import com.glykos.core.data.settings.SettingsRepository
+import com.glykos.core.domain.announce.AnnouncementSettings
 import com.glykos.feature.monitor.MonitorController
 import com.glykos.feature.monitor.ServiceStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,13 @@ class HomeViewModel @Inject constructor(
 
     val outputMode: StateFlow<OutputMode> = settings.outputMode
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OutputMode.BOTH)
+
+    val announcementSettings: StateFlow<AnnouncementSettings?> = settings.announcementSettings
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    fun saveAnnouncementSettings(value: AnnouncementSettings) {
+        viewModelScope.launch { settings.setAnnouncementSettings(value) }
+    }
 
     fun saveCredentials(email: String, password: String) {
         viewModelScope.launch { settings.saveCredentials(email, password) }

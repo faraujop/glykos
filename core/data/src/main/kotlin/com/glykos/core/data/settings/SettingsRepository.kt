@@ -6,9 +6,12 @@ import android.util.Base64
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.glykos.core.data.librelinkup.LibreLinkUpCredentials
+import com.glykos.core.domain.announce.AnnouncementSettings
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -36,6 +39,29 @@ class SettingsRepository @Inject constructor(
 
     val outputMode: Flow<OutputMode> = dataStore.data.map { prefs ->
         prefs[OUTPUT_MODE]?.let { runCatching { OutputMode.valueOf(it) }.getOrNull() } ?: OutputMode.BOTH
+    }.distinctUntilChanged()
+
+    /** Always sanitized: a corrupted value can never produce an invalid config. */
+    val announcementSettings: Flow<AnnouncementSettings> = dataStore.data.map { prefs ->
+        val d = AnnouncementSettings()
+        AnnouncementSettings(
+            intervalMinutes = prefs[INTERVAL_MIN] ?: d.intervalMinutes,
+            minChangeMgDl = prefs[MIN_CHANGE] ?: d.minChangeMgDl,
+            veryLow = prefs[VERY_LOW] ?: d.veryLow,
+            low = prefs[LOW] ?: d.low,
+            high = prefs[HIGH] ?: d.high,
+        ).sanitized()
+    }.distinctUntilChanged()
+
+    suspend fun setAnnouncementSettings(settings: AnnouncementSettings) {
+        val s = settings.sanitized()
+        dataStore.edit {
+            it[INTERVAL_MIN] = s.intervalMinutes
+            s.minChangeMgDl?.let { v -> it[MIN_CHANGE] = v } ?: it.remove(MIN_CHANGE)
+            it[VERY_LOW] = s.veryLow
+            it[LOW] = s.low
+            it[HIGH] = s.high
+        }
     }
 
     /** Email only, for display. Never expose the password to the UI. */
@@ -93,6 +119,11 @@ class SettingsRepository @Inject constructor(
     private companion object {
         val OUTPUT_MODE = stringPreferencesKey("output_mode")
         val CREDENTIALS = stringPreferencesKey("llu_credentials")
+        val INTERVAL_MIN = intPreferencesKey("announce_interval_min")
+        val MIN_CHANGE = intPreferencesKey("announce_min_change")
+        val VERY_LOW = intPreferencesKey("threshold_very_low")
+        val LOW = intPreferencesKey("threshold_low")
+        val HIGH = intPreferencesKey("threshold_high")
         const val KEYSTORE = "AndroidKeyStore"
         const val KEY_ALIAS = "glykos_llu_credentials"
         const val TRANSFORMATION = "AES/GCM/NoPadding"
