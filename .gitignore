@@ -21,3 +21,6 @@ local.properties
 
 # Personal notes (not part of the project)
 docs/linkedin-post.md
+
+# Launch videos (marketing assets, not source)
+docs/*.mp4
