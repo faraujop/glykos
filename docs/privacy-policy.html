@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de privacidad · Glykos</title>
+<meta name="description" content="Política de privacidad de la app Android Glykos.">
+<style>
+  :root { --bg:#fff; --fg:#1d1d1f; --muted:#5f6368; --line:#e3e3e3; --accent:#c2185b; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141414; --fg:#ececec; --muted:#a0a0a0; --line:#2e2e2e; --accent:#f06292; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:40px 16px 64px; }
+  h1 { font-size:1.9rem; line-height:1.2; margin:0 0 4px; }
+  h2 { font-size:1.2rem; margin:2em 0 .5em; }
+  .date { color:var(--muted); margin:0 0 1.5em; }
+  .summary { border-left:4px solid var(--accent); padding:.6em 1em; margin:1.5em 0; }
+  a { color:var(--accent); }
+  .table-wrap { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:.95rem; }
+  th, td { text-align:left; vertical-align:top; padding:.6em .5em; border-bottom:1px solid var(--line); }
+  th { font-weight:600; }
+  li { margin:.3em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>Política de privacidad de Glykos</h1>
+<p class="date">Última actualización: 11 de noviembre de 2026</p>
+
+<p>Glykos es una aplicación Android gratuita, desarrollada por Felipe Araujo Pacheco (España), que te
+lee en voz alta y muestra en tu reloj los valores de glucosa de tu cuenta de LibreLinkUp mientras
+haces ejercicio.</p>
+
+<p class="summary"><strong>En resumen: Glykos no tiene servidores propios. Tus datos no se envían al
+desarrollador ni a nadie más; se quedan en tu móvil o viajan directamente entre tu móvil y los
+servicios que tú ya usas.</strong></p>
+
+<h2>1. Qué datos usa Glykos</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Dato</th><th>Para qué</th><th>Dónde se guarda</th></tr>
+  <tr><td>Email y contraseña de tu cuenta seguidora de LibreLinkUp</td>
+      <td>Iniciar sesión en LibreLinkUp y leer tu glucosa</td>
+      <td>Solo en tu móvil, cifrados con una clave del Android Keystore que no se puede extraer</td></tr>
+  <tr><td>Token de sesión de LibreLinkUp</td>
+      <td>No tener que iniciar sesión en cada lectura</td>
+      <td>Solo en la memoria de la app; se borra al cerrarla</td></tr>
+  <tr><td>Lecturas de glucosa (valor, tendencia, hora)</td>
+      <td>Anunciarlas por voz y en notificaciones, y avisarte de valores bajos, altos o de falta de datos</td>
+      <td>Solo en la memoria de la app mientras está funcionando; Glykos no guarda un histórico</td></tr>
+  <tr><td>Tus ajustes (modo de aviso, intervalo, umbrales)</td>
+      <td>Que la app funcione como la configuraste</td>
+      <td>Solo en tu móvil</td></tr>
+</table>
+</div>
+<p>Glykos <strong>no</strong> recoge ubicación, contactos, fotos, micrófono, identificadores publicitarios
+ni datos de uso. No incluye publicidad, analítica ni herramientas de seguimiento de terceros.</p>
+
+<h2>2. Con quién se comparten los datos</h2>
+<p>El desarrollador no recibe ningún dato tuyo. Glykos solo se comunica con:</p>
+<ul>
+  <li><strong>LibreView / LibreLinkUp (Abbott)</strong>: la app se conecta directamente a sus servidores,
+    por una conexión cifrada (HTTPS), con las credenciales que tú introduces, para obtener tus lecturas.
+    Ese tratamiento lo rige la política de privacidad de Abbott, con quien ya tienes una cuenta.</li>
+  <li><strong>El motor de texto a voz de tu móvil</strong> (por ejemplo, el de Google): recibe el texto que
+    se va a leer en voz alta.</li>
+  <li><strong>Tu reloj, a través de su app</strong> (por ejemplo, Garmin Connect): si activas el aviso en el
+    reloj, Glykos publica una notificación en el móvil y la app de tu reloj la reenvía. Ese reenvío lo rige
+    la política de privacidad del fabricante del reloj.</li>
+</ul>
+<p>Glykos no vende datos ni los cede a nadie.</p>
+
+<h2>3. Permisos que pide la app</h2>
+<ul>
+  <li><strong>Internet</strong>: para leer tu glucosa de LibreLinkUp.</li>
+  <li><strong>Notificaciones</strong>: para mostrarte las lecturas y alarmas en el móvil y en el reloj.</li>
+  <li><strong>Reconocimiento de actividad física</strong>: Android lo exige para que una app de salud pueda
+    seguir funcionando en segundo plano. Glykos no lee ni guarda tu actividad.</li>
+  <li><strong>Servicio en primer plano, mantener el dispositivo activo e ignorar la optimización de
+    batería</strong>: para que las lecturas y alarmas sigan llegando con la pantalla bloqueada.</li>
+</ul>
+
+<h2>4. Conservación y borrado</h2>
+<ul>
+  <li>Las lecturas de glucosa se borran al detener la app.</li>
+  <li>Las credenciales y los ajustes se quedan en tu móvil hasta que cierras sesión en Glykos, borras los
+    datos de la app o la desinstalas. En cualquiera de esos casos se eliminan.</li>
+  <li>La app no hace copias de seguridad en la nube.</li>
+</ul>
+<p>Como el desarrollador no tiene tus datos, no hay nada que pedirle que borre. Los datos guardados en
+LibreView los gestiona Abbott.</p>
+
+<h2>5. Tus derechos</h2>
+<p>Según el Reglamento General de Protección de Datos (RGPD), tienes derecho a acceder a tus datos,
+rectificarlos, suprimirlos, limitar su tratamiento y oponerte a él. Como Glykos solo guarda datos en tu
+dispositivo, puedes ejercer esos derechos directamente desde la app o los ajustes de Android. Para
+cualquier duda, escribe a la dirección del apartado 8. También puedes reclamar ante la Agencia Española
+de Protección de Datos (<a href="https://www.aepd.es">www.aepd.es</a>).</p>
+
+<h2>6. Menores</h2>
+<p>Glykos no está dirigida a menores de 16 años.</p>
+
+<h2>7. Aviso importante</h2>
+<p>Glykos <strong>no es un producto sanitario</strong>. Solo informa y no sustituye a la app oficial de tu
+sensor, a sus alarmas ni a tu equipo médico. No la uses para tomar decisiones de tratamiento. Glykos no
+es una app de Abbott ni está afiliada a Abbott ni respaldada por ella.</p>
+
+<h2>8. Contacto y cambios</h2>
+<p>Desarrollador y responsable: Felipe Araujo Pacheco, España.<br>
+Contacto: <strong>felipe@faraujop.com</strong></p>
+<p>Si esta política cambia, la nueva versión se publicará en esta misma página con su fecha.</p>
+</main>
+</body>
+</html>
