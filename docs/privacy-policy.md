@@ -1,6 +1,6 @@
 # Política de privacidad de Glykos
 
-**Última actualización:** 11 de noviembre de 2026
+**Última actualización:** 12 de noviembre de 2026
 
 Glykos es una aplicación Android gratuita, desarrollada por Felipe Araujo Pacheco (España), que te
 lee en voz alta y muestra en tu reloj los valores de glucosa de tu cuenta de LibreLinkUp mientras
@@ -15,7 +15,7 @@ nadie más; se quedan en tu móvil o viajan directamente entre tu móvil y los s
 |---|---|---|
 | Email y contraseña de tu cuenta seguidora de LibreLinkUp | Iniciar sesión en LibreLinkUp y leer tu glucosa | Solo en tu móvil, cifrados con una clave del Android Keystore que no se puede extraer |
 | Token de sesión de LibreLinkUp | No tener que iniciar sesión en cada lectura | Solo en la memoria de la app; se borra al cerrarla |
-| Lecturas de glucosa (valor, tendencia, hora) | Anunciarlas por voz y en notificaciones, y avisarte de valores bajos, altos o de falta de datos | Solo en la memoria de la app mientras está funcionando; Glykos no guarda un histórico |
+| Lecturas de glucosa (valor, tendencia, hora) | Anunciarlas por voz y en notificaciones, avisarte de valores bajos, altos o de falta de datos, y mostrarte la gráfica de la sesión al terminar | Solo en la memoria de la app durante la sesión y en el resumen final; nunca se escriben en el móvil y Glykos no guarda un histórico |
 | Tus ajustes (modo de aviso, intervalo, umbrales) | Que la app funcione como la configuraste | Solo en tu móvil |
 
 Glykos **no** recoge ubicación, contactos, fotos, micrófono, identificadores publicitarios ni datos
@@ -47,7 +47,7 @@ Glykos no vende datos ni los cede a nadie.
 
 ## 4. Conservación y borrado
 
-- Las lecturas de glucosa se borran al detener la app.
+- Las lecturas de glucosa se borran al cerrar el resumen de la sesión, al empezar una nueva o al cerrarse la app.
 - Las credenciales y los ajustes se quedan en tu móvil hasta que cierras sesión en Glykos, borras los
   datos de la app o la desinstalas. En cualquiera de esos casos se eliminan.
 - La app no hace copias de seguridad en la nube.

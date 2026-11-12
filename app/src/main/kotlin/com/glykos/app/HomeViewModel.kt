@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.glykos.core.data.settings.OutputMode
 import com.glykos.core.data.settings.SettingsRepository
 import com.glykos.core.domain.announce.AnnouncementSettings
+import com.glykos.core.domain.session.SessionSummary
 import com.glykos.feature.monitor.MonitorController
 import com.glykos.feature.monitor.ServiceStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +32,14 @@ class HomeViewModel @Inject constructor(
 
     val announcementSettings: StateFlow<AnnouncementSettings?> = settings.announcementSettings
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /** Summary of the session that just ended, with the user's current range limits. */
+    val sessionSummary: StateFlow<SessionSummary?> =
+        combine(controller.status, settings.announcementSettings) { status, announce ->
+            status.finishedSession?.summarize(announce.toConfig().thresholds)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    fun dismissSession() = controller.dismissSession()
 
     fun saveAnnouncementSettings(value: AnnouncementSettings) {
         viewModelScope.launch { settings.setAnnouncementSettings(value) }

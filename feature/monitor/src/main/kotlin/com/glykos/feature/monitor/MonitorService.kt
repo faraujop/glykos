@@ -88,6 +88,7 @@ class MonitorService : LifecycleService() {
             return START_NOT_STICKY
         }
         acquireWakeLock()
+        controller.beginSession()
         job = lifecycleScope.launch {
             try {
                 monitor()
@@ -136,6 +137,7 @@ class MonitorService : LifecycleService() {
             coroutineScope {
                 launch {
                     monitor.state.collect { state ->
+                        controller.record(state.lastResult)
                         controller.update { it.copy(monitor = state) }
                         notifyStatus(state)
                     }
@@ -155,6 +157,7 @@ class MonitorService : LifecycleService() {
         job = null
         wakeLock?.takeIf { it.isHeld }?.release()
         wakeLock = null
+        controller.endSession()
         controller.update { it.copy(running = false, error = error) }
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -162,6 +165,7 @@ class MonitorService : LifecycleService() {
 
     override fun onDestroy() {
         wakeLock?.takeIf { it.isHeld }?.release()
+        controller.endSession()
         controller.update { it.copy(running = false) }
         super.onDestroy()
     }

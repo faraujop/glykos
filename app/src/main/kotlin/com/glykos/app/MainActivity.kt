@@ -102,6 +102,12 @@ private fun HomeScreen(
     val email by vm.email.collectAsState()
     val mode by vm.outputMode.collectAsState()
     val announce by vm.announcementSettings.collectAsState()
+    val summary by vm.sessionSummary.collectAsState()
+
+    summary?.let {
+        SessionSummaryScreen(it, onClose = vm::dismissSession, modifier = modifier)
+        return
+    }
 
     Column(
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
