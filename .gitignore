@@ -24,3 +24,6 @@ docs/linkedin-post.md
 
 # Launch videos (marketing assets, not source)
 docs/*.mp4
+
+# Brainstorming mockups (local only)
+.superpowers/
