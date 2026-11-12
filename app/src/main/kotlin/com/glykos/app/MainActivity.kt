@@ -11,6 +11,39 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import com.glykos.app.ui.theme.Brand
+import com.glykos.app.ui.theme.ReadingStyle
+import com.glykos.core.domain.announce.AnnouncementConfig
+import com.glykos.core.domain.format.NotificationMessageFormatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,12 +59,10 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -80,10 +111,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Both screens open with the night header, so status bar icons are always light.
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT))
         setContent {
             GlykosTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
+                Scaffold(modifier = Modifier.fillMaxSize(), contentWindowInsets = WindowInsets(0)) { padding ->
                     HomeScreen(voice, watch, Modifier.padding(padding))
                 }
             }
@@ -109,32 +141,39 @@ private fun HomeScreen(
         return
     }
 
-    Column(
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Glykos", style = MaterialTheme.typography.headlineMedium)
-        MonitorCard(status, hasCredentials = email != null, onStart = vm::start, onStop = vm::stop)
-        AccountCard(email, onSave = vm::saveCredentials, onClear = vm::clearCredentials)
-        OutputCard(mode, running = status.running, onSelect = vm::setOutputMode)
-        announce?.let { AnnouncementCard(it, running = status.running, onSave = vm::saveAnnouncementSettings) }
-        BatteryCard()
-        TestCard(voice, watch)
+    Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
+        MonitorHero(status, hasCredentials = email != null, onStart = vm::start, onStop = vm::stop)
+        Column(
+            Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (email == null) AccountCard(email, onSave = vm::saveCredentials, onClear = vm::clearCredentials)
+            OutputCard(mode, running = status.running, onSelect = vm::setOutputMode)
+            announce?.let { AnnouncementCard(it, running = status.running, onSave = vm::saveAnnouncementSettings) }
+            if (email != null) AccountCard(email, onSave = vm::saveCredentials, onClear = vm::clearCredentials)
+            BatteryCard()
+            TestCard(voice, watch)
+        }
     }
 }
 
+/** Quiet settings sheet: flat surface, no shadow, title in the brand indigo. */
 @Composable
 private fun Section(title: String, content: @Composable () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
+    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
             content()
         }
     }
 }
 
+/**
+ * The night header: logo + wordmark, status and the latest reading in the logo's ink.
+ * Problems (no data, stale reading, output errors) are shown here, loudly, never hidden.
+ */
 @Composable
-private fun MonitorCard(status: ServiceStatus, hasCredentials: Boolean, onStart: () -> Unit, onStop: () -> Unit) {
+private fun MonitorHero(status: ServiceStatus, hasCredentials: Boolean, onStart: () -> Unit, onStop: () -> Unit) {
     val context = LocalContext.current
     var permissionMessage by remember { mutableStateOf<String?>(null) }
     val permissions = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -142,35 +181,114 @@ private fun MonitorCard(status: ServiceStatus, hasCredentials: Boolean, onStart:
             permissionMessage = null
             onStart()
         } else {
-            permissionMessage = "⚠️ Sin los permisos de notificaciones y actividad física no puedo vigilar en segundo plano."
+            permissionMessage = "Sin los permisos de notificaciones y actividad física no puedo vigilar en segundo plano."
         }
     }
+    val m = status.monitor
 
-    Section("Monitorización") {
-        val m = status.monitor
-        Text(if (status.running) "🟢 Activa" else "⚪ Parada")
-        when (val r = m.lastResult) {
-            is GlucoseResult.Available -> Text("Última lectura: ${r.reading.valueMgDl} mg/dl")
-            is GlucoseResult.Unavailable -> Text("⚠️ Sin datos: ${r.reason.name.lowercase()}")
-            null -> if (status.running) Text("Esperando la primera lectura…")
+    NightHeader {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(painterResource(R.drawable.ic_glykos_logo), contentDescription = null, Modifier.size(40.dp))
+            Spacer(Modifier.width(10.dp))
+            Text("Glykos", style = MaterialTheme.typography.headlineSmall, color = Color.White)
         }
-        m.outputErrors.forEach { Text("⚠️ ${it.sink}: ${it.message}", color = MaterialTheme.colorScheme.error) }
-        (status.error ?: permissionMessage)?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-        if (!hasCredentials) Text("Configura la cuenta de LibreLinkUp para empezar.")
 
+        Spacer(Modifier.height(22.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            StatusChip(status.running)
+            m.lastCheckAt?.takeIf { status.running }?.let {
+                Spacer(Modifier.width(8.dp))
+                Text("comprobado ${shortTime(it)}", style = MaterialTheme.typography.bodySmall, color = OnNightMuted)
+            }
+        }
+
+        Spacer(Modifier.height(6.dp))
+        when (val r = m.lastResult) {
+            is GlucoseResult.Available -> ReadingRow(r.reading, m.lastAnnouncement)
+            is GlucoseResult.Unavailable -> HeroWarning("Sin datos: ${r.reason.name.lowercase()}")
+            null -> Text(
+                when {
+                    status.running -> "Esperando la primera lectura…"
+                    hasCredentials -> "Pulsa Empezar antes de iniciar la actividad."
+                    else -> "Configura la cuenta de LibreLinkUp para empezar."
+                },
+                style = MaterialTheme.typography.bodyLarge,
+                color = OnNightMuted,
+                modifier = Modifier.padding(vertical = 12.dp),
+            )
+        }
+        m.outputErrors.forEach { HeroWarning("${it.sink}: ${it.message}") }
+        (status.error ?: permissionMessage)?.let { HeroWarning(it) }
+
+        Spacer(Modifier.height(16.dp))
         if (status.running) {
-            Button(onClick = onStop, modifier = Modifier.fillMaxWidth()) { Text("Parar") }
+            OutlinedButton(
+                onClick = onStop,
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.25f)),
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.White.copy(alpha = 0.08f), contentColor = Color.White),
+            ) { Text("Parar") }
         } else {
-            Button(
+            InkButton(
+                text = "Empezar",
+                enabled = hasCredentials,
                 onClick = {
                     val missing = context.missingPermissions()
                     if (missing.isEmpty()) onStart() else permissions.launch(missing.toTypedArray())
                 },
-                enabled = hasCredentials,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text("Empezar") }
+            )
         }
     }
+}
+
+@Composable
+private fun ReadingRow(reading: GlucoseReading, last: Announcement?) {
+    val age = Clock.System.now() - reading.timestamp
+    val stale = reading.isStale(Clock.System.now(), AnnouncementConfig().staleAfter)
+    val delta = last?.takeIf { (it.result as? GlucoseResult.Available)?.reading == reading }?.deltaMgDl
+    Row(verticalAlignment = Alignment.Bottom) {
+        Text(
+            reading.valueMgDl.toString(),
+            style = if (stale) ReadingStyle.merge(TextStyle(color = OnNightMuted)) else ReadingStyle,
+        )
+        Spacer(Modifier.width(8.dp))
+        Text("mg/dl", style = MaterialTheme.typography.bodyLarge, color = OnNightMuted, modifier = Modifier.padding(bottom = 10.dp))
+        Spacer(Modifier.weight(1f))
+        val trend = listOfNotNull(
+            NotificationMessageFormatter.arrow(reading.trend),
+            delta?.let { if (it > 0) "+$it" else if (it < 0) "−${-it}" else "±0" },
+        ).joinToString(" ")
+        Text(trend, style = MaterialTheme.typography.headlineSmall, color = Color.White, modifier = Modifier.padding(bottom = 8.dp))
+    }
+    if (stale) HeroWarning("Dato de hace ${age.inWholeMinutes} min: sin lecturas recientes")
+}
+
+@Composable
+private fun StatusChip(running: Boolean) {
+    val dot = if (running) Color(0xFF4CD38A) else Color.White.copy(alpha = 0.5f)
+    val bg = if (running) Color(0x382E9E5B) else Color.White.copy(alpha = 0.1f)
+    val fg = if (running) Color(0xFF8FE3B0) else OnNightMuted
+    val label = if (running) "Vigilando" else "Parada"
+    Row(
+        Modifier.clip(RoundedCornerShape(50)).background(bg).padding(horizontal = 10.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(8.dp).clip(CircleShape).background(dot))
+        Spacer(Modifier.width(6.dp))
+        Text(label, style = MaterialTheme.typography.labelMedium, color = fg)
+    }
+}
+
+@Composable
+private fun HeroWarning(text: String) {
+    Text(
+        "⚠️ $text",
+        style = MaterialTheme.typography.bodyMedium,
+        color = Brand.Cream,
+        modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp)).background(Brand.Coral.copy(alpha = 0.22f)).padding(10.dp),
+    )
 }
 
 private fun Context.missingPermissions(): List<String> = buildList {
@@ -229,16 +347,31 @@ private fun AccountCard(email: String?, onSave: (String, String) -> Unit, onClea
 
 @Composable
 private fun OutputCard(mode: OutputMode, running: Boolean, onSelect: (OutputMode) -> Unit) {
+    val options = listOf(OutputMode.VOICE to "Voz", OutputMode.WATCH to "Reloj", OutputMode.BOTH to "Ambos")
     Section("Salida") {
-        listOf(OutputMode.VOICE to "Voz (cascos)", OutputMode.WATCH to "Reloj", OutputMode.BOTH to "Ambos").forEach { (m, label) ->
-            Row(
-                Modifier.fillMaxWidth().selectable(selected = mode == m, onClick = { onSelect(m) }),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(selected = mode == m, onClick = { onSelect(m) })
-                Text(label)
+        Row(
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant).padding(3.dp).selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+        ) {
+            options.forEach { (m, label) ->
+                val selected = mode == m
+                Box(
+                    Modifier.weight(1f).clip(RoundedCornerShape(10.dp))
+                        .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
+                        .selectable(selected = selected, role = Role.RadioButton, onClick = { onSelect(m) })
+                        .padding(vertical = 10.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
+        Text("Voz por los cascos, reloj con una notificación nueva en cada aviso.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (running) Text("Se aplica al momento.", style = MaterialTheme.typography.bodySmall)
     }
 }
@@ -246,9 +379,32 @@ private fun OutputCard(mode: OutputMode, running: Boolean, onSelect: (OutputMode
 @Composable
 private fun AnnouncementCard(saved: AnnouncementSettings, running: Boolean, onSave: (AnnouncementSettings) -> Unit) {
     var draft by remember(saved) { mutableStateOf(saved) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     val r = AnnouncementSettings
 
     Section("Avisos") {
+        Column(Modifier.fillMaxWidth().clickable { expanded = !expanded }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            SummaryLine("Avisar cada", "${saved.intervalMinutes} min")
+            SummaryLine("Hablar solo si cambia", saved.minChangeMgDl?.let { "≥ $it mg/dl" } ?: "No")
+            SummaryLine("Rango", "${saved.low} – ${saved.high} mg/dl")
+            SummaryLine("Muy baja por debajo de", "${saved.veryLow} mg/dl")
+            Text(
+                if (expanded) "Ocultar" else "Cambiar",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+        if (!expanded && draft == saved) {
+            Text(
+                "Las alarmas (baja, muy baja, alta, sin datos) avisan al momento y se repiten cada 5 min.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            return@Section
+        }
+
+        HorizontalDivider()
         Stepper("Avisar cada", draft.intervalMinutes, r.INTERVAL_RANGE, step = 1, unit = "min") {
             draft = draft.copy(intervalMinutes = it)
         }
@@ -296,6 +452,14 @@ private fun AnnouncementCard(saved: AnnouncementSettings, running: Boolean, onSa
         if (running && draft != saved) {
             Text("Al guardar se reinicia la vigilancia y se anuncia la lectura actual.", style = MaterialTheme.typography.bodySmall)
         }
+    }
+}
+
+@Composable
+private fun SummaryLine(label: String, value: String) {
+    Row(Modifier.fillMaxWidth()) {
+        Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -403,3 +567,35 @@ private object Samples {
         },
     )
 }
+
+private val OnNightMuted = Color.White.copy(alpha = 0.68f)
+
+/** Indigo night block under the status bar, with the coral glow of the logo. Shared with the summary. */
+@Composable
+fun NightHeader(content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
+            .background(Brand.NightSky)
+            .background(Brush.radialGradient(listOf(Brand.Coral.copy(alpha = 0.26f), Color.Transparent), radius = 900f, center = Offset(800f, 900f)))
+            .statusBarsPadding()
+            .padding(start = 18.dp, end = 18.dp, top = 18.dp, bottom = 20.dp),
+        content = content,
+    )
+}
+
+/** Main action, painted with the logo's ink. */
+@Composable
+fun InkButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+    Box(
+        Modifier.fillMaxWidth().height(50.dp).clip(RoundedCornerShape(14.dp))
+            .background(if (enabled) Brand.Ink else SolidColor(Color.White.copy(alpha = 0.12f)))
+            .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text, style = MaterialTheme.typography.labelLarge, color = if (enabled) Brand.Indigo else OnNightMuted)
+    }
+}
+
+private fun shortTime(at: kotlinx.datetime.Instant): String =
+    java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(java.util.Date(at.toEpochMilliseconds()))

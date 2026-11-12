@@ -44,7 +44,8 @@ object NotificationMessageFormatter {
         Kind.NO_DATA -> "⚠️"
     }
 
-    private fun arrow(trend: Trend): String? = when (trend) {
+    /** Trend arrow (↓ ↘ → ↗ ↑), or null when unknown. Also used by the app UI. */
+    fun arrow(trend: Trend): String? = when (trend) {
         Trend.FALLING_FAST -> "↓"
         Trend.FALLING -> "↘"
         Trend.STABLE -> "→"

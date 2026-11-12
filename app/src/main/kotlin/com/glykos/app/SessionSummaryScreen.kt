@@ -11,12 +11,13 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.glykos.app.ui.theme.ReadingStyle
 import com.glykos.core.domain.model.GlucoseReading
 import com.glykos.core.domain.session.SessionSummary
 import kotlinx.datetime.Instant
@@ -55,45 +57,60 @@ fun SessionSummaryScreen(summary: SessionSummary, onClose: () -> Unit, modifier:
     val data = summary.data
     val t = summary.thresholds
 
-    Column(
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Resumen de la sesión", style = MaterialTheme.typography.headlineMedium)
-        Text(
-            "${time(data.start)} – ${time(data.end)} (${minutes(data.duration)} min)",
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        Card(Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (summary.segments.isEmpty()) {
-                    Text("⚠️ No hubo lecturas durante la sesión.", color = MaterialTheme.colorScheme.error)
-                } else {
-                    GlucoseChart(summary, Modifier.fillMaxWidth().height(200.dp))
-                }
-                RangeBar(summary)
-                Legend("🔴 Bajo (<${t.low})", summary.timeBelow)
-                Legend("🟢 En rango (${t.low}–${t.high})", summary.timeInRange)
-                Legend("🟠 Alto (>${t.high})", summary.timeAbove)
-                if (summary.timeNoData > Duration.ZERO) {
-                    Legend("⚪ Sin datos", summary.timeNoData, MaterialTheme.colorScheme.error)
+    Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
+        NightHeader {
+            Text("Resumen de la sesión", style = MaterialTheme.typography.headlineSmall, color = Color.White)
+            Text(
+                "${time(data.start)} – ${time(data.end)} (${minutes(data.duration)} min)",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.68f),
+            )
+            if (summary.timeInRange > Duration.ZERO) {
+                Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(top = 14.dp)) {
+                    Text("${summary.percent(summary.timeInRange)} %", style = ReadingStyle)
+                    Text(
+                        "en rango",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.68f),
+                        modifier = Modifier.padding(start = 8.dp, bottom = 10.dp),
+                    )
                 }
             }
         }
+        Column(
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if (summary.segments.isEmpty()) {
+                        Text("⚠️ No hubo lecturas durante la sesión.", color = MaterialTheme.colorScheme.error)
+                    } else {
+                        GlucoseChart(summary, Modifier.fillMaxWidth().height(200.dp))
+                    }
+                    RangeBar(summary)
+                    Legend("🔴 Bajo (<${t.low})", summary.timeBelow)
+                    Legend("🟢 En rango (${t.low}–${t.high})", summary.timeInRange)
+                    Legend("🟠 Alto (>${t.high})", summary.timeAbove)
+                    if (summary.timeNoData > Duration.ZERO) {
+                        Legend("⚪ Sin datos", summary.timeNoData, MaterialTheme.colorScheme.error)
+                    }
+                }
+            }
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-            Stat("Inicio", summary.first?.valueMgDl)
-            Stat("Fin", summary.last?.valueMgDl)
-            Stat("Mín", summary.min)
-            Stat("Máx", summary.max)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+                Stat("Inicio", summary.first?.valueMgDl)
+                Stat("Fin", summary.last?.valueMgDl)
+                Stat("Mín", summary.min)
+                Stat("Máx", summary.max)
+            }
+
+            Text(
+                "🔒 Estos datos no se guardan: se borrarán al cerrar esta pantalla.",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Button(onClick = onClose, modifier = Modifier.fillMaxWidth().height(50.dp), shape = RoundedCornerShape(14.dp)) { Text("Cerrar") }
         }
-
-        Text(
-            "🔒 Estos datos no se guardan: se borrarán al cerrar esta pantalla.",
-            style = MaterialTheme.typography.bodySmall,
-        )
-        Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text("Cerrar") }
     }
 }
 

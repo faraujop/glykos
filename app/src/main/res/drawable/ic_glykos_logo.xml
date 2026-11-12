@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Full Glykos logo (tile + mark), same geometry as docs/logo.svg. Used next to the wordmark. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path android:pathData="M112,0 H400 A112,112 0 0 1 512,112 V400 A112,112 0 0 1 400,512 H112 A112,112 0 0 1 0,400 V112 A112,112 0 0 1 112,0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="512" android:endY="512">
+                <item android:offset="0" android:color="#FF2A1B5E" />
+                <item android:offset="1" android:color="#FF120C2E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M112,0 H400 A112,112 0 0 1 512,112 V400 A112,112 0 0 1 400,512 H112 A112,112 0 0 1 0,400 V112 A112,112 0 0 1 112,0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="256" android:centerY="281" android:gradientRadius="256">
+                <item android:offset="0" android:color="#47FF7A59" />
+                <item android:offset="1" android:color="#00FF7A59" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M326,188.6 L256,84 L156.2,233.4 A120,120 0 1,0 375.5,310.5"
+        android:strokeWidth="36"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient android:type="linear" android:startX="118" android:startY="66" android:endX="394" android:endY="438">
+                <item android:offset="0" android:color="#FFFFC15E" />
+                <item android:offset="1" android:color="#FFFF5E7E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M375.5,310.5 L352,310.5 C330,310.5 324,262 302,262 C280,262 274,310.5 254,310.5"
+        android:strokeWidth="30"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient android:type="linear" android:startX="118" android:startY="66" android:endX="394" android:endY="438">
+                <item android:offset="0" android:color="#FFFFC15E" />
+                <item android:offset="1" android:color="#FFFF5E7E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M198,310.5 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0 Z" android:fillColor="#FFFFF4E6" />
+</vector>
