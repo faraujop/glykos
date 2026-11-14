@@ -4,7 +4,6 @@ import com.glykos.core.domain.announce.Announcement
 import com.glykos.core.domain.announce.Announcement.Kind
 import com.glykos.core.domain.model.GlucoseReading
 import com.glykos.core.domain.model.GlucoseResult
-import com.glykos.core.domain.model.Trend
 import kotlin.math.abs
 
 /** Spanish TTS text for an [Announcement], e.g. "Ciento doce, bajando, menos ocho". */
@@ -25,17 +24,8 @@ object VoiceMessageFormatter {
     }
 
     private fun reading(reading: GlucoseReading, delta: Int?): String =
-        listOfNotNull(SpanishNumbers.toWords(reading.valueMgDl), trend(reading.trend), delta?.let(::delta))
+        listOfNotNull(SpanishNumbers.toWords(reading.valueMgDl), reading.trend.label(), delta?.let(::delta))
             .joinToString(", ")
-
-    private fun trend(trend: Trend): String? = when (trend) {
-        Trend.FALLING_FAST -> "bajando rápido"
-        Trend.FALLING -> "bajando"
-        Trend.STABLE -> "estable"
-        Trend.RISING -> "subiendo"
-        Trend.RISING_FAST -> "subiendo rápido"
-        Trend.UNKNOWN -> null
-    }
 
     private fun delta(delta: Int): String = when {
         delta == 0 -> "sin cambio"
