@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -116,7 +118,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             GlykosTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(), contentWindowInsets = WindowInsets(0)) { padding ->
-                    HomeScreen(voice, watch, Modifier.padding(padding))
+                    Box(Modifier.fillMaxSize()) {
+                        HomeScreen(voice, watch, Modifier.padding(padding))
+                        // Edge-to-edge (mandatory from targetSdk 35) leaves the navigation bar transparent:
+                        // without this strip, the 3-button bar is drawn over scrolling text and buttons.
+                        Spacer(
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                                .background(MaterialTheme.colorScheme.background),
+                        )
+                    }
                 }
             }
         }
