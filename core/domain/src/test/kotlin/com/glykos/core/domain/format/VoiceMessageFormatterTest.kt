@@ -121,4 +121,22 @@ class VoiceMessageFormatterTest {
         val a = announcement(112, kind = Kind.NO_DATA, delta = null, age = 75.minutes)
         assertEquals("Sin datos recientes. Último dato hace más de una hora: ciento doce.", format(a))
     }
+
+    private fun simulated(a: Announcement): Announcement {
+        val r = (a.result as GlucoseResult.Available).reading
+        return a.copy(result = GlucoseResult.Available(r.copy(simulated = true)))
+    }
+
+    @Test
+    fun `simulated reading is announced as demo`() {
+        assertEquals("Demo. Ciento doce, bajando, menos ocho", format(simulated(announcement(112))))
+    }
+
+    @Test
+    fun `simulated alarm is announced as demo`() {
+        assertEquals(
+            "Demo. Glucosa baja. Sesenta y cinco, bajando, menos diez",
+            format(simulated(announcement(65, delta = -10, kind = Kind.LOW))),
+        )
+    }
 }

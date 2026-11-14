@@ -2,6 +2,7 @@ package com.glykos.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.glykos.core.data.demo.DemoMode
 import com.glykos.core.data.settings.OutputMode
 import com.glykos.core.data.settings.SettingsRepository
 import com.glykos.core.domain.announce.AnnouncementSettings
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,12 +22,17 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val settings: SettingsRepository,
     private val controller: MonitorController,
+    private val demoMode: DemoMode,
 ) : ViewModel() {
 
     val status: StateFlow<ServiceStatus> = controller.status
 
     val email: StateFlow<String?> = settings.credentialsEmail
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /** Logged in with the Play reviewer account: all data is simulated. */
+    val isDemo: StateFlow<Boolean> = settings.credentialsEmail.map(demoMode::isDemoEmail)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
     val outputMode: StateFlow<OutputMode> = settings.outputMode
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OutputMode.BOTH)

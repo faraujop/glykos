@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.glykos.core.data.BuildConfig
+import com.glykos.core.data.demo.DemoAwareSource
+import com.glykos.core.data.demo.DemoCredentials
+import com.glykos.core.data.demo.DemoGlucoseSource
+import com.glykos.core.data.demo.DemoMode
 import com.glykos.core.data.librelinkup.LibreLinkUpSource
 import com.glykos.core.data.settings.SettingsRepository
 import com.glykos.core.data.source.GlucoseSource
@@ -38,6 +43,15 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideGlucoseSource(http: HttpClient, settings: SettingsRepository): GlucoseSource =
-        LibreLinkUpSource(httpClient = http, credentials = settings::credentials)
+    fun provideDemoMode(): DemoMode = DemoMode(DemoCredentials.of(BuildConfig.DEMO_EMAIL, BuildConfig.DEMO_PASSWORD))
+
+    @Provides
+    @Singleton
+    fun provideGlucoseSource(http: HttpClient, settings: SettingsRepository, demoMode: DemoMode): GlucoseSource =
+        DemoAwareSource(
+            real = LibreLinkUpSource(httpClient = http, credentials = settings::credentials),
+            demo = DemoGlucoseSource(),
+            demoCredentials = demoMode.credentials,
+            credentials = settings::credentials,
+        )
 }

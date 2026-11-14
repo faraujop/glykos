@@ -13,8 +13,12 @@ object VoiceMessageFormatter {
         is GlucoseResult.Unavailable -> noData(result.reason)
         is GlucoseResult.Available ->
             if (announcement.kind == Kind.NO_DATA) stale(result.reading, announcement)
-            else prefix(announcement.kind) + reading(result.reading, announcement.deltaMgDl).capitalizeFirst()
+            else demo(result.reading) + prefix(announcement.kind) +
+                reading(result.reading, announcement.deltaMgDl).capitalizeFirst()
     }
+
+    /** Simulated data must never pass for a real glucose value. */
+    private fun demo(reading: GlucoseReading): String = if (reading.simulated) "Demo. " else ""
 
     private fun prefix(kind: Kind): String = when (kind) {
         Kind.LOW -> "Glucosa baja. "

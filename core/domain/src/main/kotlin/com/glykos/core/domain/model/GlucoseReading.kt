@@ -9,11 +9,13 @@ import kotlin.time.Duration
  * @property valueMgDl glucose in mg/dl.
  * @property trend direction reported by the source.
  * @property timestamp moment the sensor took the measurement (not when we fetched it).
+ * @property simulated true for made-up demo data (Play reviewer). Every output must say so.
  */
 data class GlucoseReading(
     val valueMgDl: Int,
     val trend: Trend,
     val timestamp: Instant,
+    val simulated: Boolean = false,
 ) {
     fun age(now: Instant): Duration = now - timestamp
 

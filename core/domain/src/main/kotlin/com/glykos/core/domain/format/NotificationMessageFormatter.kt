@@ -25,6 +25,8 @@ object NotificationMessageFormatter {
                 "SIN DATOS recientes, último ${reading.valueMgDl} hace ${shortAge(age)}"
             } else {
                 listOfNotNull(
+                    // Simulated data must never pass for a real glucose value.
+                    "DEMO".takeIf { reading.simulated },
                     label(announcement.kind),
                     reading.valueMgDl.toString(),
                     reading.trend.label(),

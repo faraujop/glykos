@@ -133,4 +133,22 @@ class NotificationMessageFormatterTest {
             assertTrue(text.all { it.code <= 0xFF }) { "unsupported character in: $text" }
         }
     }
+
+    private fun simulated(a: Announcement): Announcement {
+        val r = (a.result as GlucoseResult.Available).reading
+        return a.copy(result = GlucoseResult.Available(r.copy(simulated = true)))
+    }
+
+    @Test
+    fun `simulated reading is marked as demo`() {
+        assertEquals("DEMO 112 bajando -8 (hace 1 min)", format(simulated(announcement(112))))
+    }
+
+    @Test
+    fun `simulated alarm is marked as demo`() {
+        assertEquals(
+            "DEMO BAJA 65 bajando -10 (ahora)",
+            format(simulated(announcement(65, delta = -10, kind = Kind.LOW, age = 0.seconds))),
+        )
+    }
 }

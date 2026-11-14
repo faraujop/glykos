@@ -205,7 +205,9 @@ class MonitorService : LifecycleService() {
         }
         val reading = when (val r = state.lastResult) {
             null -> "Esperando la primera lectura…"
-            is GlucoseResult.Available -> "Última: ${r.reading.valueMgDl} mg/dl · comprobado $time"
+            is GlucoseResult.Available ->
+                (if (r.reading.simulated) "DEMO (simulado) · " else "") +
+                    "Última: ${r.reading.valueMgDl} mg/dl · comprobado $time"
             is GlucoseResult.Unavailable -> "Sin datos (${r.reason.name.lowercase()}) · $time"
         }
         val errors = state.outputErrors.joinToString("\n") { "⚠️ ${it.sink}: ${it.message}" }

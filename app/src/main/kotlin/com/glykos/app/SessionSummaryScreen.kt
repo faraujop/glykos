@@ -81,6 +81,7 @@ fun SessionSummaryScreen(summary: SessionSummary, onClose: () -> Unit, modifier:
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
+            if (data.readings.any { it.simulated }) DemoBanner()
             Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (summary.segments.isEmpty()) {

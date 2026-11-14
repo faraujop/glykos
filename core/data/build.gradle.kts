@@ -13,6 +13,19 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
+
+        // Google Play reviewer login (demo mode with simulated data). Kept out of the public repo:
+        // set demo.email / demo.password in local.properties. Empty = demo mode disabled.
+        val localProps = Properties().apply {
+            rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
+        }
+        fun quoted(key: String) = "\"" + localProps.getProperty(key, "").replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+        buildConfigField("String", "DEMO_EMAIL", quoted("demo.email"))
+        buildConfigField("String", "DEMO_PASSWORD", quoted("demo.password"))
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {

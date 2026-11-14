@@ -148,6 +148,7 @@ private fun HomeScreen(
     val mode by vm.outputMode.collectAsState()
     val announce by vm.announcementSettings.collectAsState()
     val summary by vm.sessionSummary.collectAsState()
+    val isDemo by vm.isDemo.collectAsState()
 
     summary?.let {
         SessionSummaryScreen(it, onClose = vm::dismissSession, modifier = modifier)
@@ -160,6 +161,7 @@ private fun HomeScreen(
             Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (isDemo) DemoBanner()
             if (email == null) AccountCard(email, onSave = vm::saveCredentials, onClear = vm::clearCredentials)
             OutputCard(mode, running = status.running, onSelect = vm::setOutputMode)
             announce?.let { AnnouncementCard(it, running = status.running, onSave = vm::saveAnnouncementSettings) }
@@ -291,6 +293,18 @@ private fun StatusChip(running: Boolean) {
         Spacer(Modifier.width(6.dp))
         Text(label, style = MaterialTheme.typography.labelMedium, color = fg)
     }
+}
+
+/** Shown whenever data is simulated, so it can never pass for real glucose. */
+@Composable
+fun DemoBanner() {
+    Text(
+        "MODO DEMO · Datos simulados, no son una glucosa real.",
+        style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = Brand.Night,
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Brand.Amber).padding(12.dp),
+    )
 }
 
 @Composable
