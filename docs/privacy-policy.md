@@ -1,6 +1,6 @@
 # Política de privacidad de Glykos
 
-**Última actualización:** 12 de noviembre de 2026
+**Última actualización:** 14 de noviembre de 2026
 
 Glykos es una aplicación Android gratuita, desarrollada por Felipe Araujo Pacheco (España), que te
 lee en voz alta y muestra en tu reloj los valores de glucosa de tu cuenta de LibreLinkUp mientras
@@ -45,15 +45,28 @@ Glykos no vende datos ni los cede a nadie.
 - **Servicio en primer plano, mantener el dispositivo activo e ignorar la optimización de batería**:
   para que las lecturas y alarmas sigan llegando con la pantalla bloqueada.
 
-## 4. Conservación y borrado
+## 4. Conservación y borrado de tus datos
 
-- Las lecturas de glucosa se borran al cerrar el resumen de la sesión, al empezar una nueva o al cerrarse la app.
-- Las credenciales y los ajustes se quedan en tu móvil hasta que cierras sesión en Glykos, borras los
-  datos de la app o la desinstalas. En cualquiera de esos casos se eliminan.
-- La app no hace copias de seguridad en la nube.
+Glykos no permite crear cuentas: usa la cuenta seguidora de LibreLinkUp que ya tienes. Todo lo que
+guarda está en tu móvil y puedes borrarlo tú mismo en cualquier momento.
+
+**Cómo borrar tus datos de Glykos:**
+
+1. **Solo las credenciales:** abre Glykos y, en la tarjeta «Cuenta», pulsa *Borrar*.
+2. **Todo (credenciales y ajustes):** en Android, ve a *Ajustes → Aplicaciones → Glykos →
+   Almacenamiento → Borrar datos*, o desinstala la app.
+
+**Qué se borra y cuándo:**
+
+- **Lecturas de glucosa:** nunca se guardan en el móvil. Se borran de la memoria al cerrar el
+  resumen de la sesión, al empezar una nueva o al cerrarse la app.
+- **Token de sesión:** se borra al cerrarse la app.
+- **Credenciales y ajustes:** se conservan en tu móvil hasta que sigues uno de los pasos
+  anteriores; entonces se eliminan al momento.
+- La app no hace copias de seguridad en la nube y no hay periodos de conservación adicionales.
 
 Como el desarrollador no tiene tus datos, no hay nada que pedirle que borre. Los datos guardados en
-LibreView los gestiona Abbott.
+LibreView los gestiona Abbott según su propia política.
 
 ## 5. Tus derechos
 
@@ -65,7 +78,7 @@ Española de Protección de Datos (www.aepd.es).
 
 ## 6. Menores
 
-Glykos no está dirigida a menores de 16 años.
+Glykos está dirigida a personas mayores de 18 años.
 
 ## 7. Aviso importante
 
