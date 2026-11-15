@@ -9,11 +9,12 @@ desbloquear el móvil:
 - **Muñeca**: notificaciones reenviadas al reloj Garmin a través de Garmin Connect.
 - **Ambas**, según la configuración.
 
-Ejemplos: voz "Ciento doce, bajando, menos ocho"; notificación `🩸 112 ↘ −8 (hace 1 min)`.
+Ejemplos: voz "Ciento doce, bajando, menos ocho"; reloj `112 -8 baja (hace 1 min)`.
 
 > ⚠️ **Aviso**: proyecto personal de uso propio. **No es un producto sanitario** y no sustituye a los
 > sistemas de alarma oficiales del sensor ni al criterio médico. No recomienda tratamientos ni dosis.
-> Mantén siempre activas las alarmas de la app oficial del sensor.
+> Mantén siempre activas las alarmas de la app oficial del sensor. Si la usas, lo haces bajo tu
+> responsabilidad (ver [Licencia](#licencia)).
 
 ## Índice
 
@@ -103,8 +104,9 @@ está lista para Glykos.
 
 ### 2.1 Instalar
 
-- **Sin ser desarrollador**: instala el APK release siguiendo [docs/INSTALL.md](docs/INSTALL.md)
-  (guía paso a paso; también en PDF: [docs/Glykos-guia-instalacion.pdf](docs/Glykos-guia-instalacion.pdf)).
+- **Sin ser desarrollador**: Glykos no está publicada en Google Play para todo el mundo. Pídeme por
+  privado que te añada como tester (necesito el email de la cuenta de Google de tu móvil) y sigue
+  [docs/INSTALL.md](docs/INSTALL.md).
 - **Desde el código** (ver [Desarrollo](#desarrollo)): `./gradlew installDebug` instala la versión de
   desarrollo como `com.glykos.app.debug`, que convive con la release.
 
@@ -280,7 +282,7 @@ reutilizado, re-login solo ante 401, backoff de 1 a 30 min tras fallos de login 
 ## Hoja de ruta
 
 - **Fase 0 (spike)** ✅: login LibreLinkUp, lectura, voz con pantalla bloqueada, notificación al reloj.
-  Pendiente: prueba de aceptación de 30 min corriendo.
+  Validada en una tirada real de 76 min.
 - **Fase 1 (MVP)**: configuración completa (intervalo, cambio mínimo, umbrales), histéresis en
   alarmas, sesión persistente, robustez.
 - **Fase 2**: histórico local (Room), sync a backend .NET 8 en AWS, resumen de glucosa en Strava.
@@ -302,3 +304,10 @@ reutilizado, re-login solo ante 401, backoff de 1 a 30 min tras fallos de login 
 
 FreeStyle Libre, LibreLink y LibreLinkUp son marcas de Abbott. Garmin y Forerunner son marcas de
 Garmin. Este proyecto no está afiliado, respaldado ni patrocinado por Abbott ni por Garmin.
+
+## Licencia
+
+[MIT](LICENSE). Puedes usar, modificar y redistribuir el código. Se ofrece **tal cual, sin garantía
+de ningún tipo**. Si distribuyes una versión modificada a otras personas, tú eres responsable de ella
+(en la UE, una app que avisa de valores de glucosa podría considerarse producto sanitario según el
+MDR).

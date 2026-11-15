@@ -55,20 +55,17 @@ desinstalar LibreLinkUp si quieres (la cuenta sigue existiendo).
 
 ## Paso 2 · Instalar Glykos
 
-Glykos no está en Google Play: se instala desde un archivo **APK** que te habrán enviado
-(por WhatsApp, Telegram, email o Drive).
+Glykos no está publicada en Google Play para todo el mundo. Se instala desde Google Play como
+**tester**, con una invitación:
 
-1. **Descarga** el archivo `glykos-0.1.0.apk` en el móvil.
-2. Ábrelo (desde la notificación de descarga o desde la app **Archivos** → *Descargas*).
-3. Android te dirá que, por seguridad, no puede instalar apps de ese origen. Pulsa **Ajustes** y
-   activa **Permitir de esta fuente** para la app con la que lo abriste (WhatsApp, Archivos,
-   Chrome…). Vuelve atrás.
-4. Pulsa **Instalar**.
-5. Si aparece **Google Play Protect** diciendo que la app es desconocida, pulsa
-   **Más detalles → Instalar de todas formas**. Es normal: la app no viene de Google Play.
-6. Cuando termine, pulsa **Abrir**.
+1. Envía al desarrollador el **email de la cuenta de Google** que usas en el móvil (la de Play Store).
+2. Cuando te avise de que te ha añadido, abre en el móvil el **enlace de participación** que te
+   mande. Si te pide iniciar sesión, usa esa misma cuenta de Google.
+3. Pulsa **Aceptar invitación** / **Convertirse en tester** y luego **Descargar en Google Play**.
+4. Pulsa **Instalar** y, cuando termine, **Abrir**.
 
-> 💡 Después puedes volver a desactivar "Permitir de esta fuente" para esa app.
+> 💡 Si el enlace dice que la app no está disponible, espera unos minutos y vuelve a probar: la
+> invitación tarda un poco en activarse.
 
 ---
 
@@ -112,7 +109,7 @@ En la pantalla de Glykos, de arriba abajo:
 1. Ponte los cascos con música.
 2. En Glykos, baja hasta **Pruebas → Probar voz y reloj** y pulsa **Ambos** en el primer ejemplo.
    Deberías oír *"Ciento doce, bajando, menos ocho"* mientras la música baja, y ver
-   `🩸 112 ↘ −8` en el reloj. (Son datos de ejemplo, no tu glucosa.)
+   `112 -8 baja` en el reloj. (Son datos de ejemplo, no tu glucosa.)
 3. Sube y pulsa **Empezar**. Concede los permisos que pida:
    - **Notificaciones** (para el reloj y para la notificación fija).
    - **Actividad física** (Android lo exige para que funcione con la pantalla bloqueada; Glykos no
@@ -154,8 +151,7 @@ aviso anterior.
 
 ## Actualizar y desinstalar
 
-- **Actualizar**: cuando te envíen un APK nuevo, ábrelo e instálalo encima. Conservas tu
-  configuración.
+- **Actualizar**: Google Play actualiza Glykos como cualquier otra app. Conservas tu configuración.
 - **Desinstalar**: como cualquier app. Tus credenciales se borran del móvil. Si quieres, puedes
   quitar también el acceso de la cuenta seguidora desde la app oficial del sensor →
   *Aplicaciones conectadas*.
