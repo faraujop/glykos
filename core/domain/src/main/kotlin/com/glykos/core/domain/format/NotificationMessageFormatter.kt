@@ -9,9 +9,10 @@ import kotlin.math.abs
 import kotlin.time.Duration
 
 /**
- * Short one-line text for the watch notification, e.g. "112 bajando -8 (hace 1 min)".
- * Kept compact: the Garmin FR35 shows only a few characters per line. Plain Latin-1 text only:
- * the FR35 draws emoji, arrows and symbols such as "−" or "±" as "?" boxes.
+ * Short one-line text for the watch notification, e.g. "112 -8 baja (hace 1 min)".
+ * The Garmin FR35 shows only about 12 characters on its first screen, so value and delta come first
+ * and the trend uses short words. Plain Latin-1 text only: the FR35 draws emoji, arrows and symbols
+ * such as "−" or "±" as "?" boxes.
  */
 object NotificationMessageFormatter {
 
@@ -29,8 +30,8 @@ object NotificationMessageFormatter {
                     "DEMO".takeIf { reading.simulated },
                     label(announcement.kind),
                     reading.valueMgDl.toString(),
-                    reading.trend.label(),
                     announcement.deltaMgDl?.let(::delta),
+                    shortTrend(reading.trend),
                     if (age.inWholeMinutes < 1) "(ahora)" else "(hace ${shortAge(age)})",
                 ).joinToString(" ")
             }
@@ -43,6 +44,16 @@ object NotificationMessageFormatter {
         Kind.VERY_LOW -> "MUY BAJA"
         Kind.HIGH -> "ALTA"
         Kind.NO_DATA -> "SIN DATOS"
+    }
+
+    /** Trend in short words, so it fits the watch screen; null when unknown. */
+    private fun shortTrend(trend: Trend): String? = when (trend) {
+        Trend.FALLING_FAST -> "baja rápido"
+        Trend.FALLING -> "baja"
+        Trend.STABLE -> "estable"
+        Trend.RISING -> "sube"
+        Trend.RISING_FAST -> "sube rápido"
+        Trend.UNKNOWN -> null
     }
 
     /** Trend arrow (↓ ↘ → ↗ ↑) for the app UI, or null when unknown. Not for the watch text. */

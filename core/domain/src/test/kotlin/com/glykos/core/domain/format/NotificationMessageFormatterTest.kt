@@ -37,17 +37,17 @@ class NotificationMessageFormatterTest {
     private fun format(a: Announcement) = NotificationMessageFormatter.format(a)
 
     @Test
-    fun `routine notification shows value, trend, delta and age`() {
-        assertEquals("112 bajando -8 (hace 1 min)", format(announcement(112)))
+    fun `routine notification shows value, delta, trend and age`() {
+        assertEquals("112 -8 baja (hace 1 min)", format(announcement(112)))
     }
 
     @ParameterizedTest
     @CsvSource(
-        "FALLING_FAST, '112 bajando rápido -8 (hace 1 min)'",
-        "FALLING, '112 bajando -8 (hace 1 min)'",
-        "STABLE, '112 estable -8 (hace 1 min)'",
-        "RISING, '112 subiendo -8 (hace 1 min)'",
-        "RISING_FAST, '112 subiendo rápido -8 (hace 1 min)'",
+        "FALLING_FAST, '112 -8 baja rápido (hace 1 min)'",
+        "FALLING, '112 -8 baja (hace 1 min)'",
+        "STABLE, '112 -8 estable (hace 1 min)'",
+        "RISING, '112 -8 sube (hace 1 min)'",
+        "RISING_FAST, '112 -8 sube rápido (hace 1 min)'",
         "UNKNOWN, '112 -8 (hace 1 min)'",
     )
     fun `trend is shown as a word and omitted when unknown`(trend: Trend, expected: String) {
@@ -56,12 +56,12 @@ class NotificationMessageFormatterTest {
 
     @Test
     fun `positive delta has a plus sign`() {
-        assertEquals("120 subiendo +15 (hace 1 min)", format(announcement(120, Trend.RISING, delta = 15)))
+        assertEquals("120 +15 sube (hace 1 min)", format(announcement(120, Trend.RISING, delta = 15)))
     }
 
     @Test
     fun `zero delta is shown as plus zero`() {
-        assertEquals("90 estable +0 (hace 1 min)", format(announcement(90, Trend.STABLE, delta = 0)))
+        assertEquals("90 +0 estable (hace 1 min)", format(announcement(90, Trend.STABLE, delta = 0)))
     }
 
     @Test
@@ -71,18 +71,18 @@ class NotificationMessageFormatterTest {
 
     @Test
     fun `reading younger than a minute is shown as ahora`() {
-        assertEquals("112 bajando -8 (ahora)", format(announcement(112, age = 40.seconds)))
+        assertEquals("112 -8 baja (ahora)", format(announcement(112, age = 40.seconds)))
     }
 
     @Test
     fun `low alarm is labelled`() {
-        assertEquals("BAJA 65 bajando -10 (ahora)", format(announcement(65, delta = -10, kind = Kind.LOW, age = 0.seconds)))
+        assertEquals("BAJA 65 -10 baja (ahora)", format(announcement(65, delta = -10, kind = Kind.LOW, age = 0.seconds)))
     }
 
     @Test
     fun `very low alarm is labelled`() {
         assertEquals(
-            "MUY BAJA 50 bajando rápido -10 (ahora)",
+            "MUY BAJA 50 -10 baja rápido (ahora)",
             format(announcement(50, Trend.FALLING_FAST, delta = -10, kind = Kind.VERY_LOW, age = 0.seconds)),
         )
     }
@@ -90,7 +90,7 @@ class NotificationMessageFormatterTest {
     @Test
     fun `high alarm is labelled`() {
         assertEquals(
-            "ALTA 190 subiendo +15 (ahora)",
+            "ALTA 190 +15 sube (ahora)",
             format(announcement(190, Trend.RISING, delta = 15, kind = Kind.HIGH, age = 0.seconds)),
         )
     }
@@ -134,6 +134,20 @@ class NotificationMessageFormatterTest {
         }
     }
 
+    /** The FR35 shows only about 12 characters on its first screen: value and delta must fit there. */
+    @Test
+    fun `value and delta fit in the first 12 characters`() {
+        Trend.entries.forEach { trend ->
+            listOf(-25, -8, 0, 7, 30).forEach { delta ->
+                listOf(45, 112, 312).forEach { value ->
+                    val text = format(announcement(value, trend, delta = delta))
+                    val signed = if (delta < 0) "$delta" else "+$delta"
+                    assertTrue(text.take(12).startsWith("$value $signed")) { "value/delta cut in: $text" }
+                }
+            }
+        }
+    }
+
     private fun simulated(a: Announcement): Announcement {
         val r = (a.result as GlucoseResult.Available).reading
         return a.copy(result = GlucoseResult.Available(r.copy(simulated = true)))
@@ -141,13 +155,13 @@ class NotificationMessageFormatterTest {
 
     @Test
     fun `simulated reading is marked as demo`() {
-        assertEquals("DEMO 112 bajando -8 (hace 1 min)", format(simulated(announcement(112))))
+        assertEquals("DEMO 112 -8 baja (hace 1 min)", format(simulated(announcement(112))))
     }
 
     @Test
     fun `simulated alarm is marked as demo`() {
         assertEquals(
-            "DEMO BAJA 65 bajando -10 (ahora)",
+            "DEMO BAJA 65 -10 baja (ahora)",
             format(simulated(announcement(65, delta = -10, kind = Kind.LOW, age = 0.seconds))),
         )
     }

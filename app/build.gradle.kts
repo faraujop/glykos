@@ -15,8 +15,8 @@ android {
         applicationId = "com.glykos.app"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.1.1"
     }
 
     // Release signing from local.properties (git-ignored); the keystore lives outside the repo.
