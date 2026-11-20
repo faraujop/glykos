@@ -104,9 +104,8 @@ está lista para Glykos.
 
 ### 2.1 Instalar
 
-- **Sin ser desarrollador**: Glykos no está publicada en Google Play para todo el mundo. Pídeme por
-  privado que te añada como tester (necesito el email de la cuenta de Google de tu móvil) y sigue
-  [docs/INSTALL.md](docs/INSTALL.md).
+- **Sin ser desarrollador**: Glykos no está en Google Play (Google exige una empresa para publicar
+  apps de salud). Pídeme el APK por privado y sigue [docs/INSTALL.md](docs/INSTALL.md).
 - **Desde el código** (ver [Desarrollo](#desarrollo)): `./gradlew installDebug` instala la versión de
   desarrollo como `com.glykos.app.debug`, que convive con la release.
 

@@ -1,7 +1,7 @@
 # Instalar Glykos (guía para no desarrolladores)
 
-Glykos te dice tu glucosa **por voz en los cascos** y **en tu reloj Garmin** mientras haces deporte,
-sin sacar el móvil.
+Glykos te dice tu glucosa **por voz en los cascos** y **en tu reloj Garmin** sin sacar el móvil:
+corriendo, en la bici, en el gimnasio, paseando o conduciendo.
 
 > ⚠️ **Antes de empezar**
 > - Glykos es un **proyecto personal y gratuito, no un producto sanitario**. Informa, pero **no
@@ -55,17 +55,34 @@ desinstalar LibreLinkUp si quieres (la cuenta sigue existiendo).
 
 ## Paso 2 · Instalar Glykos
 
-Glykos no está publicada en Google Play para todo el mundo. Se instala desde Google Play como
-**tester**, con una invitación:
+Glykos no está en Google Play: se instala con un archivo **APK** (el instalador de una app Android)
+que te pasa el desarrollador. Android avisa de que viene "de fuera de la tienda"; es normal.
 
-1. Envía al desarrollador el **email de la cuenta de Google** que usas en el móvil (la de Play Store).
-2. Cuando te avise de que te ha añadido, abre en el móvil el **enlace de participación** que te
-   mande. Si te pide iniciar sesión, usa esa misma cuenta de Google.
-3. Pulsa **Aceptar invitación** / **Convertirse en tester** y luego **Descargar en Google Play**.
-4. Pulsa **Instalar** y, cuando termine, **Abrir**.
+**2.1 Descarga el APK.** Abre **en el móvil** el enlace que te han mandado y descarga el archivo
+`glykos-….apk`. Si el navegador avisa de que *"este tipo de archivo puede ser dañino"*, pulsa
+**Descargar de todas formas**.
 
-> 💡 Si el enlace dice que la app no está disponible, espera unos minutos y vuelve a probar: la
-> invitación tarda un poco en activarse.
+> 🔒 Instala Glykos **solo desde el enlace que te ha dado el desarrollador**. Un APK de otra fuente
+> podría estar modificado.
+
+**2.2 Ábrelo.** Cuando termine la descarga, pulsa **Abrir** en el aviso del navegador. Si ya lo
+cerraste, abre la app **Archivos** (o **Mis archivos**) → **Descargas** → toca `glykos-….apk`.
+
+**2.3 Permite la instalación.** La primera vez, Android dice que no puede instalar apps de este origen:
+
+1. Pulsa **Ajustes**.
+2. Activa **Permitir de esta fuente** (o *Permitir apps desconocidas*) para el navegador o la app de
+   archivos que estés usando.
+3. Vuelve atrás con la flecha.
+
+**2.4 Instala.** Pulsa **Instalar** y, cuando termine, **Abrir**.
+
+> 💡 Si aparece **Google Play Protect** diciendo que la app es desconocida, pulsa **Más detalles** →
+> **Instalar de todos modos**. Sale porque Glykos no está en la tienda, no porque haya un problema.
+> Si te ofrece **enviarla para analizarla**, puedes decir que sí o que no: no cambia nada.
+
+Cuando esté instalada, puedes volver a desactivar *Permitir de esta fuente* en los ajustes; Glykos
+seguirá funcionando.
 
 ---
 
@@ -151,7 +168,9 @@ aviso anterior.
 
 ## Actualizar y desinstalar
 
-- **Actualizar**: Google Play actualiza Glykos como cualquier otra app. Conservas tu configuración.
+- **Actualizar**: Glykos **no se actualiza sola**. Cuando el desarrollador te pase una versión nueva,
+  descarga el APK e instálalo encima (paso 2): conservas tu cuenta y tu configuración. Si Android dice
+  que la app **no es compatible** con la instalada, avisa al desarrollador antes de desinstalar nada.
 - **Desinstalar**: como cualquier app. Tus credenciales se borran del móvil. Si quieres, puedes
   quitar también el acceso de la cuenta seguidora desde la app oficial del sensor →
   *Aplicaciones conectadas*.
